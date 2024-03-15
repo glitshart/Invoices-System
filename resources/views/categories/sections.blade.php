@@ -122,7 +122,7 @@
                             type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('sections.store') }}" method="post">
+                        <form action="{{ route('sections.store') }}" method="post" autocomplete="off">
                             {{ csrf_field() }}
 
                             <div class="form-group">
