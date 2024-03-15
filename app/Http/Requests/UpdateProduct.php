@@ -25,7 +25,7 @@ class UpdateProduct extends FormRequest
     public function rules()
     {
         return [
-            'product_name' => ['required', Rule::unique('products')->ignore($this->id)],
+            'product_name' => 'required',
             'section_id' => 'required',
         ];
     }
@@ -39,7 +39,6 @@ class UpdateProduct extends FormRequest
     {
         return  [
             'product_name.required' => 'يرجي ادخال اسم المنتج',
-            'product_name.unique' => 'اسم المنتج مسجل مسبقا',
             'section_id.required' => 'يرجي ادخال القسم لهذا المنتج',
         ];
     }

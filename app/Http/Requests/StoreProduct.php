@@ -24,7 +24,7 @@ class StoreProduct extends FormRequest
     public function rules()
     {
         return [
-            'product_name' => 'required|unique:products|max:255',
+            'product_name' => 'required|max:255',
             'section_id' => 'required',
         ];
     }
@@ -38,7 +38,6 @@ class StoreProduct extends FormRequest
     {
         return  [
             'product_name.required' => 'يرجي ادخال اسم المنتج',
-            'product_name.unique' => 'اسم المنتج مسجل مسبقا',
             'section_id.required' => 'يرجي ادخال القسم لهذا المنتج',
         ];
     }
