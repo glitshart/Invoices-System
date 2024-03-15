@@ -23,6 +23,13 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resource('invoices', 'InvoiceController');
+// Pages Routes
+Route::middleware('auth')->group(function () {
+    Route::resource('invoices', 'InvoiceController');
+    Route::resource('sections', 'SectionController');
+    Route::resource('products', 'ProductController');
+});
 
+
+// Admin Handling
 Route::get('/{page}', 'AdminController@index');
