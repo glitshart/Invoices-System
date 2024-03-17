@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Storeproduct;
-use App\Http\Requests\UpdateProduct;
-use App\product;
+use App\Product;
 use App\Section;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -20,7 +17,17 @@ class ProductController extends Controller
     {
         $sections = Section::all();
         $products = Product::all();
-        return view('categories.products', compact('products', 'sections'));
+        return view('categories.products', compact('sections', 'products'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -29,30 +36,24 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProduct $request)
+    public function store(Request $request)
     {
-        // Retrieve the validated input data...
-        $validated = $request->validated();
-
-        // Create a new product
         Product::create([
             'product_name' => $request->product_name,
             'section_id' => $request->section_id,
             'description' => $request->description,
         ]);
-
-        // Redirect to the product index page with success message
-        session()->flash('add', 'تم اضافة القسم بنجاح');
+        session()->flash('Add', 'تم اضافة المنتج بنجاح ');
         return redirect('/products');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\product  $product
+     * @param  \App\products  $products
      * @return \Illuminate\Http\Response
      */
-    public function show(product $product)
+    public function show(Product $products)
     {
         //
     }
@@ -60,10 +61,10 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\product  $product
+     * @param  \App\products  $products
      * @return \Illuminate\Http\Response
      */
-    public function edit(product $product)
+    public function edit(Product $products)
     {
         //
     }
@@ -72,41 +73,37 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\product  $product
+     * @param  \App\products  $products
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProduct $request)
+    public function update(Request $request)
     {
-        // Retrieve the validated input data...
-        $request->validated();
 
-        // Find the product by id
-        $product = Product::find($request->id);
+        $id = Section::where('section_name', $request->section_name)->first()->id;
 
-        // Update the product
-        $product->update([
+        $Products = Product::findOrFail($request->pro_id);
+
+        $Products->update([
             'product_name' => $request->product_name,
-            'section_id' => $request->section_id,
             'description' => $request->description,
+            'section_id' => $id,
         ]);
 
-        // Redirect to the product index page with success message
-        session()->flash('edit', 'تم تعديل القسم بنجاح');
-        return redirect('/products');
+        session()->flash('Edit', 'تم تعديل المنتج بنجاح');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\product  $product
+     * @param  \App\products  $products
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request)
     {
-        Product::findOrFail($request->id)->delete();
-
-        // Redirect to the product index page with success message
-        session()->flash('delete', 'تم حذف القسم بنجاح');
-        return redirect('/products');
+        $Products = Product::findOrFail($request->pro_id);
+        $Products->delete();
+        session()->flash('delete', 'تم حذف المنتج بنجاح');
+        return back();
     }
 }

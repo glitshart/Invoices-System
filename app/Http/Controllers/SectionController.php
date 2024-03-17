@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSection;
 use App\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SectionController extends Controller
 {
@@ -50,9 +51,10 @@ class SectionController extends Controller
      * @param  \App\Section  $section
      * @return \Illuminate\Http\Response
      */
-    public function show(Section $section)
+    public function show(string $id)
     {
-        //
+        $products = DB::table('products')->where('section_id', $id)->pluck('product_name', 'id');
+        return json_encode($products);
     }
 
     /**
@@ -76,7 +78,7 @@ class SectionController extends Controller
     public function update(UpdateSection $request)
     {
         // Retrieve the validated input data...
-        $validated = $request->validated();
+        $request->validated();
 
         // Find the section by id
         $section = Section::find($request->id);

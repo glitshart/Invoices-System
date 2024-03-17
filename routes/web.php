@@ -23,13 +23,24 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-// Pages Routes
+// Authenticated routes
 Route::middleware('auth')->group(function () {
+    // Invoices routes
     Route::resource('invoices', 'InvoiceController');
+    Route::get('invoices/edit/{id}', 'InvoiceController@edit');
+
+    // Sections routes
     Route::resource('sections', 'SectionController');
     Route::resource('products', 'ProductController');
+
+
+    // Attachments routes
+    Route::post('attachments/destroy', 'AttachmentsInvoiceController@destroy');
+    Route::post('attachments/store', 'AttachmentsInvoiceController@store');
+    Route::get('attachments/{invoice_number}/{file_name}', 'AttachmentsInvoiceController@show');
+    Route::get('attachments/download/{invoice_number}/{file_name}', 'AttachmentsInvoiceController@download');
 });
 
 
-// Admin Handling
+// Admin handling
 Route::get('/{page}', 'AdminController@index');

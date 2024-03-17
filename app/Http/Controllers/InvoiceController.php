@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\AttachmentsInvoice;
+use App\DetailsInvoice;
 use App\Invoice;
+use App\Section;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
@@ -14,7 +18,8 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        return view('invoices.invoices_list');
+        $invoices = Invoice::all();
+        return view('invoices.index', compact('invoices'));
     }
 
     /**
@@ -24,7 +29,8 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        //
+        $sections = Section::all();
+        return view('invoices.add', compact('sections'));
     }
 
     /**
@@ -35,7 +41,56 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Invoice::create([
+            'invoice_number' => $request->invoice_number,
+            'invoice_Date' => $request->invoice_Date,
+            'Due_date' => $request->Due_date,
+            'product' => $request->product,
+            'section_id' => $request->Section,
+            'Amount_collection' => $request->Amount_collection,
+            'Amount_Commission' => $request->Amount_Commission,
+            'Discount' => $request->Discount,
+            'Value_VAT' => $request->Value_VAT,
+            'Rate_VAT' => $request->Rate_VAT,
+            'Total' => $request->Total,
+            'Status' => 'غير مدفوعة',
+            'Value_Status' => 2,
+            'note' => $request->note,
+        ]);
+
+        $invoice_id = Invoice::latest()->first()->id;
+        DetailsInvoice::create([
+            'id_Invoice' => $invoice_id,
+            'invoice_number' => $request->invoice_number,
+            'product' => $request->product,
+            'Section' => $request->Section,
+            'Status' => 'غير مدفوعة',
+            'Value_Status' => 2,
+            'note' => $request->note,
+            'user' => (Auth::user()->name),
+        ]);
+
+        if ($request->hasFile('pic')) {
+
+            $invoice_id = Invoice::latest()->first()->id;
+            $image = $request->file('pic');
+            $file_name = $image->getClientOriginalName();
+            $invoice_number = $request->invoice_number;
+
+            $attachments = new AttachmentsInvoice();
+            $attachments->file_name = $file_name;
+            $attachments->invoice_number = $invoice_number;
+            $attachments->Created_by = Auth::user()->name;
+            $attachments->invoice_id = $invoice_id;
+            $attachments->save();
+
+            // move pic
+            $imageName = $request->pic->getClientOriginalName();
+            $request->pic->move(public_path('attachments/invoices/' . $invoice_number), $imageName);
+        }
+
+        session()->flash('Add', 'تم اضافة الفاتورة بنجاح');
+        return redirect('/invoices');
     }
 
     /**
@@ -44,20 +99,25 @@ class InvoiceController extends Controller
      * @param  \App\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
+    public function show(string $id)
     {
-        //
+        $invoices = Invoice::where('id', $id)->first();
+        $details = DetailsInvoice::where('id_Invoice', $id)->get();
+        $attachments = AttachmentsInvoice::where('invoice_id', $id)->get();
+        return view('invoices.details', compact('invoices', 'details', 'attachments'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Invoice  $invoice
+     * @param  string  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Invoice $invoice)
+    public function edit(string $id)
     {
-        //
+        $invoices = Invoice::where('id', $id)->first();
+        $sections = Section::all();
+        return view('invoices.edit', compact('sections', 'invoices'));
     }
 
     /**
@@ -67,9 +127,26 @@ class InvoiceController extends Controller
      * @param  \App\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Invoice $invoice)
+    public function update(Request $request)
     {
-        //
+        $invoices = Invoice::findOrFail($request->invoice_id);
+        $invoices->update([
+            'invoice_number' => $request->invoice_number,
+            'invoice_Date' => $request->invoice_Date,
+            'Due_date' => $request->Due_date,
+            'product' => $request->product,
+            'section_id' => $request->Section,
+            'Amount_collection' => $request->Amount_collection,
+            'Amount_Commission' => $request->Amount_Commission,
+            'Discount' => $request->Discount,
+            'Value_VAT' => $request->Value_VAT,
+            'Rate_VAT' => $request->Rate_VAT,
+            'Total' => $request->Total,
+            'note' => $request->note,
+        ]);
+
+        session()->flash('edit', 'تم تعديل الفاتورة بنجاح');
+        return redirect('invoices');
     }
 
     /**
