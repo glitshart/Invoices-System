@@ -39,7 +39,6 @@
         </script>
     @endif
 
-
     @if (session()->has('Status_Update'))
         <script>
             window.onload = function() {
@@ -62,6 +61,17 @@
         </script>
     @endif
 
+    @if (session()->has('add'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "تم اضافة الفاتورة بنجاح",
+                    type: "success"
+                })
+            }
+        </script>
+    @endif
+
     @if (session()->has('edit'))
         <script>
             window.onload = function() {
@@ -72,7 +82,6 @@
             }
         </script>
     @endif
-
 
     <!-- row -->
     <div class="row">
@@ -148,7 +157,8 @@
                                                     type="button">العمليات<i class="fas fa-caret-down ml-1"></i></button>
                                                 <div class="dropdown-menu tx-13">
                                                     <a class="dropdown-item"
-                                                        href=" {{ url('invoices/edit') }}/{{ $invoice->id }}">تعديل
+                                                        href=" {{ url('invoices/edit') }}/{{ $invoice->id }}"><i
+                                                            class="text-success fas fa-pen-alt"></i>&nbsp;&nbsp;تعديل
                                                         الفاتورة</a>
 
                                                     <a class="dropdown-item" href="#"
@@ -199,7 +209,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <form action="{{ route('invoices.destroy', 'test') }}" method="post">
+                    <form action="{{ url('invoices/destroy') }}" method="post">
                         {{ method_field('delete') }}
                         {{ csrf_field() }}
                 </div>

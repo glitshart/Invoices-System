@@ -8,6 +8,7 @@ use App\Invoice;
 use App\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -89,7 +90,7 @@ class InvoiceController extends Controller
             $request->pic->move(public_path('attachments/invoices/' . $invoice_number), $imageName);
         }
 
-        session()->flash('Add', 'تم اضافة الفاتورة بنجاح');
+        session()->flash('add', 'تم اضافة الفاتورة بنجاح');
         return redirect('/invoices');
     }
 
@@ -155,8 +156,25 @@ class InvoiceController extends Controller
      * @param  \App\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Request $request)
     {
-        //
+        $id = $request->invoice_id;
+        $invoices = Invoice::where('id', $id)->first();
+        $attachments = AttachmentsInvoice::where('invoice_id', $id)->first();
+        $id_page = $request->id_page;
+
+        if (!$id_page == 2) {
+            //* If the invoice has any attachments.
+            if (!empty($attachments->invoice_number)) {
+                Storage::disk('public_uploads')->deleteDirectory($attachments->invoice_number);
+            }
+            $invoices->forceDelete();
+            session()->flash('delete_invoice');
+            return redirect('/invoices');
+        } else {
+            $invoices->delete();
+            session()->flash('archive_invoice');
+            return redirect('/Archive');
+        }
     }
 }
