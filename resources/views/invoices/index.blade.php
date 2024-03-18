@@ -159,7 +159,8 @@
                                                     <a class="dropdown-item"
                                                         href=" {{ url('invoices/edit') }}/{{ $invoice->id }}"><i
                                                             class="text-success fas fa-pen-alt"></i>&nbsp;&nbsp;تعديل
-                                                        الفاتورة</a>
+                                                        الفاتورة
+                                                    </a>
 
                                                     <a class="dropdown-item" href="#"
                                                         data-invoice_id="{{ $invoice->id }}" data-toggle="modal"
@@ -167,17 +168,18 @@
                                                             class="text-danger fas fa-trash-alt"></i>&nbsp;&nbsp;حذف
                                                         الفاتورة</a>
 
-                                                    <a class="dropdown-item" {{-- href="{{ URL::route('Status_show', [$invoice->id]) }}" --}}><i
-                                                            class=" text-success fas
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    fa-money-bill"></i>&nbsp;&nbsp;تغير
-                                                        حالة
-                                                        الدفع</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ URL::route('invoices/status', [$invoice->id]) }}">
+                                                        <i class=" text-success fas fa-money-bill"></i>
+                                                        &nbsp;&nbsp;تغير حالة الدفع
+                                                    </a>
 
                                                     <a class="dropdown-item" href="#"
                                                         data-invoice_id="{{ $invoice->id }}" data-toggle="modal"
                                                         data-target="#Transfer_invoice"><i
                                                             class="text-warning fas fa-exchange-alt"></i>&nbsp;&nbsp;نقل الي
-                                                        الارشيف</a>
+                                                        الارشيف
+                                                    </a>
 
                                                     <a class="dropdown-item" href="Print_invoice/{{ $invoice->id }}"><i
                                                             class="text-success fas fa-print"></i>&nbsp;&nbsp;طباعة
