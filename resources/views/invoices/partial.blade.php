@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    قائمة الفواتير
+    الفواتير المدفوعة جزئيا
 @stop
 @section('css')
     <!-- Internal Data table css -->
@@ -18,8 +18,9 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ قائمة
-                    الفواتير</span>
+                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ الفواتير
+                    المدفوعة جزئيا
+                </span>
             </div>
         </div>
 
@@ -39,16 +40,6 @@
         </script>
     @endif
 
-    @if (session()->has('not_found'))
-        <script>
-            window.onload = function() {
-                notif({
-                    msg: "الفاتورة اللتي تبحث عنها غير موجودة بالفعل",
-                    type: "error"
-                })
-            }
-        </script>
-    @endif
 
     @if (session()->has('Status_Update'))
         <script>
@@ -61,51 +52,16 @@
         </script>
     @endif
 
-    @if (session()->has('restore_invoice'))
-        <script>
-            window.onload = function() {
-                notif({
-                    msg: "تم استعادة الفاتورة بنجاح",
-                    type: "success"
-                })
-            }
-        </script>
-    @endif
-
-    @if (session()->has('add'))
-        <script>
-            window.onload = function() {
-                notif({
-                    msg: "تم اضافة الفاتورة بنجاح",
-                    type: "success"
-                })
-            }
-        </script>
-    @endif
-
-    @if (session()->has('edit'))
-        <script>
-            window.onload = function() {
-                notif({
-                    msg: "تم تعديل الفاتورة بنجاح",
-                    type: "success"
-                })
-            }
-        </script>
-    @endif
-
     <!-- row -->
     <div class="row">
         <!--div-->
         <div class="col-xl-12">
             <div class="card mg-b-20">
                 <div class="card-header pb-0">
-                    <a href="invoices/create" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
-                            class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
-
-                    <a class="modal-effect btn btn-sm btn-primary" href="{{ url('export_invoices') }}"
-                        style="color:white"><i class="fas fa-file-download"></i>&nbsp;تصدير اكسيل</a>
-
+                    <div class="d-flex justify-content-between">
+                        <a href="invoices/create" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
+                                class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -192,7 +148,7 @@
                                                         الارشيف
                                                     </a>
 
-                                                    <a class="dropdown-item" href="invoices/print/{{ $invoice->id }}"><i
+                                                    <a class="dropdown-item" href="Print_invoice/{{ $invoice->id }}"><i
                                                             class="text-success fas fa-print"></i>&nbsp;&nbsp;طباعة
                                                         الفاتورة
                                                     </a>
@@ -317,11 +273,6 @@
             modal.find('.modal-body #invoice_id').val(invoice_id);
         })
     </script>
-
-
-
-
-
 
 
 @endsection

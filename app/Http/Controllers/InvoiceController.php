@@ -9,6 +9,7 @@ use App\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class InvoiceController extends Controller
 {
@@ -102,10 +103,20 @@ class InvoiceController extends Controller
      */
     public function show(string $id)
     {
-        $invoices = Invoice::where('id', $id)->first();
-        $details = DetailsInvoice::where('id_Invoice', $id)->get();
-        $attachments = AttachmentsInvoice::where('invoice_id', $id)->get();
-        return view('invoices.details', compact('invoices', 'details', 'attachments'));
+        try {
+            $invoices = Invoice::where('id', $id)->first();
+            $details = DetailsInvoice::where('id_Invoice', $id)->get();
+            $attachments = AttachmentsInvoice::where('invoice_id', $id)->get();
+            if (!empty($invoices) && !empty($attachments) && !empty($details)) {
+                return view('invoices.details', compact('invoices', 'details', 'attachments'));
+            } else {
+                session()->flash('not_found');
+                return redirect('/invoices');
+            }
+        } catch (Throwable $e) {
+            session()->flash('error', $e->getMessage());
+            return redirect('/invoices');
+        }
     }
 
     /**
@@ -118,6 +129,79 @@ class InvoiceController extends Controller
     {
         $invoices = Invoice::where('id', $id)->first();
         return view('invoices.status', compact('invoices'));
+    }
+
+    /**
+     * Display the status of invoice.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function paid(Request $request)
+    {
+        $invoices = Invoice::where('Value_Status', 1)->get();
+        return view('invoices.paid', compact('invoices'));
+    }
+    /**
+     * Display the status of invoice.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function unpaid(Request $request)
+    {
+        $invoices = Invoice::where('Value_Status', 2)->get();
+        return view('invoices.unpaid', compact('invoices'));
+    }
+
+    /**
+     * Display the status of invoice.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function partial(Request $request)
+    {
+        $invoices = Invoice::where('Value_Status', 3)->get();
+        return view('invoices.partial', compact('invoices'));
+    }
+
+    /**
+     * Display the status of invoice.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function archives(Request $request)
+    {
+        $invoices = Invoice::onlyTrashed()->get();
+        return view('invoices.archive', compact('invoices'));
+    }
+
+    /**
+     * Display the status of invoice.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function unarchive(Request $request)
+    {
+        $id = $request->invoice_id;
+        Invoice::withTrashed()->where('id', $id)->restore();
+        session()->flash('restore_invoice');
+        return redirect('/invoices');
+    }
+
+    /**
+     * Display the status of invoice.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function print(string $id)
+    {
+        $invoices = Invoice::findOrFail($id);
+        return view('invoices.print', compact('invoices'));
     }
 
     /**
@@ -238,7 +322,7 @@ class InvoiceController extends Controller
         } else {
             $invoices->delete();
             session()->flash('archive_invoice');
-            return redirect('/Archive');
+            return redirect('/invoices/archive');
         }
     }
 }

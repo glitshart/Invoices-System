@@ -51,10 +51,20 @@
                 <ul class="slide-menu">
                     <li><a class="slide-item" href="{{ url('/' . ($page = 'invoices')) }}">قائمة
                             الفواتير</a></li>
-                    <li><a class="slide-item" href="{{ url('/' . ($page = 'chart-flot')) }}">الفواتير الغير مدفوعة</a>
+
+                    <li><a class="slide-item" href="{{ url('/' . ($page = 'invoices/paid')) }}">الفواتير المدفوعة</a>
                     </li>
-                    <li><a class="slide-item" href="{{ url('/' . ($page = 'chart-chartjs')) }}">الفواتير المدفوعة
-                            جزئيا</a></li>
+
+                    <li><a class="slide-item" href="{{ url('/' . ($page = 'invoices/unpaid')) }}">الفواتير
+                            الغير مدفوعة</a>
+                    </li>
+
+                    <li><a class="slide-item" href="{{ url('/' . ($page = 'invoices/partial')) }}">الفواتير المدفوعة
+                            جزئيا</a>
+                    </li>
+
+                    <li><a class="slide-item" href="{{ url('/' . ($page = 'invoices/archive')) }}">ارشيف الفواتير</a>
+                    </li>
                 </ul>
             </li>
             <li class="slide">
