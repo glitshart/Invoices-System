@@ -9,7 +9,6 @@ use App\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
 
 class InvoiceController extends Controller
 {
@@ -103,18 +102,13 @@ class InvoiceController extends Controller
      */
     public function show(string $id)
     {
-        try {
-            $invoices = Invoice::where('id', $id)->first();
-            $details = DetailsInvoice::where('id_Invoice', $id)->get();
-            $attachments = AttachmentsInvoice::where('invoice_id', $id)->get();
-            if (!empty($invoices) && !empty($attachments) && !empty($details)) {
-                return view('invoices.details', compact('invoices', 'details', 'attachments'));
-            } else {
-                session()->flash('not_found');
-                return redirect('/invoices');
-            }
-        } catch (Throwable $e) {
-            session()->flash('error', $e->getMessage());
+        $invoices = Invoice::where('id', $id)->first();
+        $details = DetailsInvoice::where('id_Invoice', $id)->get();
+        $attachments = AttachmentsInvoice::where('invoice_id', $id)->get();
+        if (!empty($invoices) && !empty($attachments) && !empty($details)) {
+            return view('invoices.details', compact('invoices', 'details', 'attachments'));
+        } else {
+            session()->flash('not_found');
             return redirect('/invoices');
         }
     }
